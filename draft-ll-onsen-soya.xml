@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-model href="rfc7991bis.rnc"?>
+
+
+<!DOCTYPE rfc [
+  <!ENTITY nbsp    "&#160;">
+  <!ENTITY zwsp   "&#8203;">
+  <!ENTITY nbhy   "&#8209;">
+  <!ENTITY wj     "&#8288;">
+]>
+
+<rfc
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  category="info"
+  docName="draft-ll-onsen-soya-latest"
+  ipr="trust200902"
+  obsoletes=""
+  updates=""
+  submissionType="IETF"
+  xml:lang="en"
+  version="3">
+
+  <front>
+    <title abbrev="SOYA">
+      Service Orchestration with YANG-modeled Abstractions Framework
+    </title>
+
+    <seriesInfo name="Internet-Draft" value="draft-ll-onsen-soya-latest"/>
+
+    <author fullname="Kris Lambrechts" initials="K." surname="Lambrechts">
+      <organization>Intwine</organization>
+      <address>
+        <email>kris@intwine.net</email>
+        <uri>https://www.intwine.net</uri>
+      </address>
+    </author>
+
+    <author fullname="Kristian Larsson" initials="K." surname="Larsson">
+      <organization>Centor</organization>
+      <address>
+        <email>k@centor.se</email>
+      </address>
+    </author>
+
+    <date year="2026"/>
+
+    <area>General</area>
+    <workgroup>Internet Engineering Task Force</workgroup>
+
+    <keyword>yang</keyword>
+    <keyword>mapping</keyword>
+
+    <abstract>
+      <t>
+        This document defines the Service Orchestration with YANG-modeled Abstractions Framework
+        (SOYA) for building layered orchestration systems using
+        YANG models, and specifies the interactions between different
+        orchestration layers.
+      </t>
+    </abstract>
+
+  </front>
+
+  <middle>
+
+    <section>
+      <name>Introduction</name>
+      <t>
+        The YANG Data Modeling Language (<xref target="RFC7950"/>) has become
+        ubiquitous in modern network management and is widely adopted for
+        modeling configuration and state data for network devices. YANG equally
+        lends itself to describing higher-level orchestration intent at various
+        layers of abstraction.
+      </t>
+      <t>
+        This document defines the Service Orchestration with
+        YANG-modeled Abstractions (SOYA) Framework for building layered
+        orchestration systems. Each layer allows for the expression of a service
+        intent, according to a set of YANG models. These layers may be hosted on
+        separate SOYA Orchestrators or within a single SOYA Orchestrator,
+        depending on the deployment architecture.
+      </t>
+      <t>
+        Service intent, e.g. configuration, flows from the highest abstraction
+        layer down to the managed devices. Operational state, on the
+        other hand, flows from the devices up to the higher abstraction layers.
+        The framework specifies permissible data exchanges between different
+        abstraction layers, both within a single SOYA Orchestrator and across
+        multiple SOYA Orchestrators.
+      </t>
+      <section>
+        <name>Requirements Language</name>
+        <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+          "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT
+          RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
+          interpreted as described in BCP 14 <xref target="RFC2119"/>
+          <xref target="RFC8174"/> when, and only when, they appear in
+          all capitals, as shown here.</t>
+      </section>
+      <section>
+        <name>Definition of SOYA Orchestrator</name>
+        <t>In the context of this document, a SOYA Orchestrator refers to a
+          software component responsible for managing network services by
+          processing service intent and operational state. Network
+          orchestrators, network controllers, and other similar components are
+          collectively referred to as "SOYA Orchestrators".
+        </t>
+      </section>
+    </section>
+
+    <section anchor="soya-orchestrator">
+      <name>The SOYA Orchestrator</name>
+      <t>
+        A SOYA Orchestrator is a software component capable of receiving,
+        storing, and processing service intent. In a SOYA Orchestrator, intent
+        is stored in a datastore as defined in RFC 7950.
+        SOYA Orchestrators MUST implement, at a minimum, the running-config
+        datastore as defined in <xref target="RFC8342"/>.
+      </t>
+      <t>
+        Processing each received intent update involves executing the
+        SOYA Orchestrator's business logic. Typically, this will result in a
+        corresponding output intent for next orchestration layer down; or for
+        the managed device(s) in case of the lowest service layer.
+      </t>
+      <t>
+        The SOYA Orchestrator MAY also support receiving/collecting operational
+        state from its managed devices or from the service layer below. Upon
+        receiving operational state updates, the SOYA Orchestrator SHOULD
+        persist them in its datastore. Processing each received operational
+        state update involves analyzing it according to its business logic and
+        determining the necessary actions. Those may include updating the SOYA
+        Orchestrator's internal state, generating new service intents for the
+        lower layer, or triggering specific configuration changes on managed
+        devices. The SOYA Orchestrator can also propagate operational state
+        updates to the next orchestration layer up. The SOYA Orchestrator can
+        also generate notifications or raise alarms.
+      </t>
+      <section anchor="single-layer-orchestrator">
+        <name>Single-Layer Orchestrator</name>
+        <t>
+          A single-layer SOYA Orchestrator is responsible for managing network
+          services at a specific layer of abstraction. It processes service
+          intents and operational state relevant to its layer and interacts with
+          both the higher orchestration layer (if any) and the lower
+          orchestration layer or managed devices.
+        </t>
+      </section>
+      <section anchor="multi-layer-orchestrator">
+        <name>Multi-Layer Orchestrator</name>
+        <t>
+          A multi-layer SOYA Orchestrator is capable of managing network services
+          on multiple layers of abstraction within a single SOYA Orchestrator.
+        </t>
+      </section>
+    </section>
+    <section anchor="service-layering">
+      <name>Service Layering</name>
+      <t>
+        An overall orchestration system MAY be comprised of multiple layers,
+        each responsible for a specific level of abstraction in managing network
+        services. The schema for each layer is defined by a set of YANG models.
+      </t>
+      <section>
+        <name>Propagating Service Intent Down</name>
+        <t>TODO</t>
+      </section>
+
+      <section>
+        <name>Propagating Operational State Up</name>
+        <t>TODO</t>
+      </section>
+    </section>
+
+    <section anchor="northbound-interfaces">
+      <name>Northbound Interfaces</name>
+      <t>TODO</t>
+
+      <section>
+        <name>NETCONF</name>
+        <t>TODO</t>
+      </section>
+
+      <section>
+        <name>RESTCONF</name>
+        <t>TODO</t>
+      </section>
+    </section>
+
+    <section anchor="southbound-interfaces">
+      <name>Southbound Interfaces</name>
+      <t>TODO</t>
+      <section>
+        <name>NETCONF</name>
+        <t>TODO</t>
+      </section>
+
+      <section>
+        <name>RESTCONF</name>
+        <t>TODO</t>
+      </section>
+
+      <section>
+        <name>Non-YANG Interfaces</name>
+        <t>TODO</t>
+      </section>
+    </section>
+
+    <section anchor="acknowledgements">
+      <name>Acknowledgements</name>
+      <t>TODO</t>
+    </section>
+    <section anchor="IANA">
+      <name>IANA Considerations</name>
+      <t>This memo includes no request to IANA.</t>
+    </section>
+
+    <section anchor="Security">
+      <name>Security Considerations</name>
+      <t>TODO</t>
+    </section>
+
+  </middle>
+
+  <back>
+    <references>
+      <name>References</name>
+      <references>
+        <name>Normative References</name>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.7950.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml"/>
+        <xi:include href="https://bib.ietf.org/public/rfc/bibxml/reference.RFC.8342.xml"/>
+      </references>
+    </references>
+  </back>
+</rfc>

@@ -53,8 +53,7 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction
-     1.1.  Requirements Language
-     1.2.  Definition of SOYA Orchestrator
+     1.1.  Definition of SOYA Orchestrator
    2.  The SOYA Orchestrator
      2.1.  Single-Layer Orchestrator
      2.2.  Multi-Layer Orchestrator
@@ -97,15 +96,7 @@ Table of Contents
    different abstraction layers, both within a single SOYA Orchestrator
    and across multiple SOYA Orchestrators.
 
-1.1.  Requirements Language
-
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in BCP
-   14 [RFC2119] [RFC8174] when, and only when, they appear in all
-   capitals, as shown here.
-
-1.2.  Definition of SOYA Orchestrator
+1.1.  Definition of SOYA Orchestrator
 
    In the context of this document, a SOYA Orchestrator refers to a
    software component responsible for managing network services by
@@ -118,7 +109,7 @@ Table of Contents
    A SOYA Orchestrator is a software component capable of receiving,
    storing, and processing service intent.  In a SOYA Orchestrator,
    intent is stored in a datastore as defined in RFC 7950.  SOYA
-   Orchestrators MUST implement, at a minimum, the running-config
+   Orchestrators must implement, at a minimum, the running-config
    datastore as defined in [RFC8342].
 
    Processing each received intent update involves executing the SOYA
@@ -126,7 +117,7 @@ Table of Contents
    corresponding output intent for next orchestration layer down; or for
    the managed device(s) in case of the lowest service layer.
 
-   The SOYA Orchestrator MAY also support receiving/collecting
+   The SOYA Orchestrator may also support receiving/collecting
    operational state from its managed devices or from the service layer
    below.  Upon receiving operational state updates, the SOYA
    Orchestrator SHOULD persist them in its datastore.  Processing each
@@ -155,7 +146,7 @@ Table of Contents
 
 3.  Service Layering
 
-   An overall orchestration system MAY be comprised of multiple layers,
+   An overall orchestration system may be comprised of multiple layers,
    each responsible for a specific level of abstraction in managing
    network services.  The schema for each layer is defined by a set of
    YANG models.

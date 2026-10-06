@@ -89,15 +89,6 @@
         multiple SOYA Orchestrators.
       </t>
       <section>
-        <name>Requirements Language</name>
-        <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
-          "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT
-          RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-          interpreted as described in BCP 14 <xref target="RFC2119"/>
-          <xref target="RFC8174"/> when, and only when, they appear in
-          all capitals, as shown here.</t>
-      </section>
-      <section>
         <name>Definition of SOYA Orchestrator</name>
         <t>In the context of this document, a SOYA Orchestrator refers to a
           software component responsible for managing network services by
@@ -114,7 +105,7 @@
         A SOYA Orchestrator is a software component capable of receiving,
         storing, and processing service intent. In a SOYA Orchestrator, intent
         is stored in a datastore as defined in RFC 7950.
-        SOYA Orchestrators MUST implement, at a minimum, the running-config
+        SOYA Orchestrators must implement, at a minimum, the running-config
         datastore as defined in <xref target="RFC8342"/>.
       </t>
       <t>
@@ -124,7 +115,7 @@
         the managed device(s) in case of the lowest service layer.
       </t>
       <t>
-        The SOYA Orchestrator MAY also support receiving/collecting operational
+        The SOYA Orchestrator may also support receiving/collecting operational
         state from its managed devices or from the service layer below. Upon
         receiving operational state updates, the SOYA Orchestrator SHOULD
         persist them in its datastore. Processing each received operational
@@ -157,7 +148,7 @@
     <section anchor="service-layering">
       <name>Service Layering</name>
       <t>
-        An overall orchestration system MAY be comprised of multiple layers,
+        An overall orchestration system may be comprised of multiple layers,
         each responsible for a specific level of abstraction in managing network
         services. The schema for each layer is defined by a set of YANG models.
       </t>

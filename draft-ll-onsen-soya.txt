@@ -1,0 +1,243 @@
+
+
+
+
+Internet Engineering Task Force                            K. Lambrechts
+Internet-Draft                                                   Intwine
+Intended status: Informational                                K. Larsson
+Expires: 9 April 2027                                             Centor
+                                                          6 October 2026
+
+
+     Service Orchestration with YANG-modeled Abstractions Framework
+                       draft-ll-onsen-soya-latest
+
+Abstract
+
+   This document defines the Service Orchestration with YANG-modeled
+   Abstractions Framework (SOYA) for building layered orchestration
+   systems using YANG models, and specifies the interactions between
+   different orchestration layers.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 9 April 2027.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction
+     1.1.  Requirements Language
+     1.2.  Definition of SOYA Orchestrator
+   2.  The SOYA Orchestrator
+     2.1.  Single-Layer Orchestrator
+     2.2.  Multi-Layer Orchestrator
+   3.  Service Layering
+     3.1.  Propagating Service Intent Down
+     3.2.  Propagating Operational State Up
+   4.  Northbound Interfaces
+     4.1.  NETCONF
+     4.2.  RESTCONF
+   5.  Southbound Interfaces
+     5.1.  NETCONF
+     5.2.  RESTCONF
+     5.3.  Non-YANG Interfaces
+   6.  Acknowledgements
+   7.  IANA Considerations
+   8.  Security Considerations
+   9.  References
+     9.1.  Normative References
+   Authors' Addresses
+
+1.  Introduction
+
+   The YANG Data Modeling Language ([RFC7950]) has become ubiquitous in
+   modern network management and is widely adopted for modeling
+   configuration and state data for network devices.  YANG equally lends
+   itself to describing higher-level orchestration intent at various
+   layers of abstraction.
+
+   This document defines the Service Orchestration with YANG-modeled
+   Abstractions (SOYA) Framework for building layered orchestration
+   systems.  Each layer allows for the expression of a service intent,
+   according to a set of YANG models.  These layers may be hosted on
+   separate SOYA Orchestrators or within a single SOYA Orchestrator,
+   depending on the deployment architecture.
+
+   Service intent, e.g. configuration, flows from the highest
+   abstraction layer down to the managed devices.  Operational state, on
+   the other hand, flows from the devices up to the higher abstraction
+   layers.  The framework specifies permissible data exchanges between
+   different abstraction layers, both within a single SOYA Orchestrator
+   and across multiple SOYA Orchestrators.
+
+1.1.  Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+1.2.  Definition of SOYA Orchestrator
+
+   In the context of this document, a SOYA Orchestrator refers to a
+   software component responsible for managing network services by
+   processing service intent and operational state.  Network
+   orchestrators, network controllers, and other similar components are
+   collectively referred to as "SOYA Orchestrators".
+
+2.  The SOYA Orchestrator
+
+   A SOYA Orchestrator is a software component capable of receiving,
+   storing, and processing service intent.  In a SOYA Orchestrator,
+   intent is stored in a datastore as defined in RFC 7950.  SOYA
+   Orchestrators MUST implement, at a minimum, the running-config
+   datastore as defined in [RFC8342].
+
+   Processing each received intent update involves executing the SOYA
+   Orchestrator's business logic.  Typically, this will result in a
+   corresponding output intent for next orchestration layer down; or for
+   the managed device(s) in case of the lowest service layer.
+
+   The SOYA Orchestrator MAY also support receiving/collecting
+   operational state from its managed devices or from the service layer
+   below.  Upon receiving operational state updates, the SOYA
+   Orchestrator SHOULD persist them in its datastore.  Processing each
+   received operational state update involves analyzing it according to
+   its business logic and determining the necessary actions.  Those may
+   include updating the SOYA Orchestrator's internal state, generating
+   new service intents for the lower layer, or triggering specific
+   configuration changes on managed devices.  The SOYA Orchestrator can
+   also propagate operational state updates to the next orchestration
+   layer up.  The SOYA Orchestrator can also generate notifications or
+   raise alarms.
+
+2.1.  Single-Layer Orchestrator
+
+   A single-layer SOYA Orchestrator is responsible for managing network
+   services at a specific layer of abstraction.  It processes service
+   intents and operational state relevant to its layer and interacts
+   with both the higher orchestration layer (if any) and the lower
+   orchestration layer or managed devices.
+
+2.2.  Multi-Layer Orchestrator
+
+   A multi-layer SOYA Orchestrator is capable of managing network
+   services on multiple layers of abstraction within a single SOYA
+   Orchestrator.
+
+3.  Service Layering
+
+   An overall orchestration system MAY be comprised of multiple layers,
+   each responsible for a specific level of abstraction in managing
+   network services.  The schema for each layer is defined by a set of
+   YANG models.
+
+3.1.  Propagating Service Intent Down
+
+   TODO
+
+3.2.  Propagating Operational State Up
+
+   TODO
+
+4.  Northbound Interfaces
+
+   TODO
+
+4.1.  NETCONF
+
+   TODO
+
+4.2.  RESTCONF
+
+   TODO
+
+5.  Southbound Interfaces
+
+   TODO
+
+5.1.  NETCONF
+
+   TODO
+
+5.2.  RESTCONF
+
+   TODO
+
+5.3.  Non-YANG Interfaces
+
+   TODO
+
+6.  Acknowledgements
+
+   TODO
+
+7.  IANA Considerations
+
+   This memo includes no request to IANA.
+
+8.  Security Considerations
+
+   TODO
+
+9.  References
+
+9.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC7950]  Bjorklund, M., Ed., "The YANG 1.1 Data Modeling Language",
+              RFC 7950, DOI 10.17487/RFC7950, August 2016,
+              <https://www.rfc-editor.org/info/rfc7950>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+   [RFC8342]  Bjorklund, M., Schoenwaelder, J., Shafer, P., Watsen, K.,
+              and R. Wilton, "Network Management Datastore Architecture
+              (NMDA)", RFC 8342, DOI 10.17487/RFC8342, March 2018,
+              <https://www.rfc-editor.org/info/rfc8342>.
+
+Authors' Addresses
+
+   Kris Lambrechts
+   Intwine
+   Email: kris@intwine.net
+   URI:   https://www.intwine.net
+
+
+   Kristian Larsson
+   Centor
+   Email: k@centor.se

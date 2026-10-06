@@ -15,7 +15,7 @@ Expires: 9 April 2027                                             Centor
 Abstract
 
    This document defines the Service Orchestration with YANG-modeled
-   Abstractions Framework (SOYA) for building layered orchestration
+   Abstractions (SOYA) Framework for building layered orchestration
    systems using YANG models, and specifies the interactions between
    different orchestration layers.
 
@@ -100,17 +100,19 @@ Table of Contents
 
    In the context of this document, a SOYA Orchestrator refers to a
    software component responsible for managing network services by
-   processing service intent and operational state.  Network
-   orchestrators, network controllers, and other similar components are
-   collectively referred to as "SOYA Orchestrators".
+   processing service intent and operational state.  A variety of terms
+   exist in the industry, including domain orchestrator, network
+   orchestrator, domain controller, and SDN controller.  Any platform
+   capable of adhering to the SOYA framework, can be referred to as a
+   SOYA Orchestrator.
 
 2.  The SOYA Orchestrator
 
    A SOYA Orchestrator is a software component capable of receiving,
    storing, and processing service intent.  In a SOYA Orchestrator,
-   intent is stored in a datastore as defined in RFC 7950.  SOYA
-   Orchestrators must implement, at a minimum, the running-config
-   datastore as defined in [RFC8342].
+   intent is stored in a datastore as defined in [RFC7950].  SOYA
+   Orchestrators must implement, at a minimum, the <running-config>
+   datastore as defined in Section 5.1.3 of [RFC8342].
 
    Processing each received intent update involves executing the SOYA
    Orchestrator's business logic.  Typically, this will result in a
@@ -120,7 +122,7 @@ Table of Contents
    The SOYA Orchestrator may also support receiving/collecting
    operational state from its managed devices or from the service layer
    below.  Upon receiving operational state updates, the SOYA
-   Orchestrator SHOULD persist them in its datastore.  Processing each
+   Orchestrator should persist them in its datastore.  Processing each
    received operational state update involves analyzing it according to
    its business logic and determining the necessary actions.  Those may
    include updating the SOYA Orchestrator's internal state, generating
@@ -203,18 +205,9 @@ Table of Contents
 
 9.1.  Normative References
 
-   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997,
-              <https://www.rfc-editor.org/info/rfc2119>.
-
    [RFC7950]  Bjorklund, M., Ed., "The YANG 1.1 Data Modeling Language",
               RFC 7950, DOI 10.17487/RFC7950, August 2016,
               <https://www.rfc-editor.org/info/rfc7950>.
-
-   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
-              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
-              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
    [RFC8342]  Bjorklund, M., Schoenwaelder, J., Shafer, P., Watsen, K.,
               and R. Wilton, "Network Management Datastore Architecture

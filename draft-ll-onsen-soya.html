@@ -9,9 +9,9 @@
 <meta content="Kristian Larsson" name="author">
 <meta content="
        
-        This document defines the Service Orchestration with YANG-modeled Abstractions Framework
-        (SOYA) for building layered orchestration systems using
-        YANG models, and specifies the interactions between different
+        This document defines the Service Orchestration with YANG-modeled
+        Abstractions (SOYA) Framework for building layered orchestration systems
+        using YANG models, and specifies the interactions between different
         orchestration layers.
        
     " name="description">
@@ -1088,9 +1088,9 @@ svg {
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">
-        This document defines the Service Orchestration with YANG-modeled Abstractions Framework
-        (SOYA) for building layered orchestration systems using
-        YANG models, and specifies the interactions between different
+        This document defines the Service Orchestration with YANG-modeled
+        Abstractions (SOYA) Framework for building layered orchestration systems
+        using YANG models, and specifies the interactions between different
         orchestration layers.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
@@ -1250,9 +1250,11 @@ svg {
         </h3>
 <p id="section-1.1-1">In the context of this document, a SOYA Orchestrator refers to a
           software component responsible for managing network services by
-          processing service intent and operational state. Network
-          orchestrators, network controllers, and other similar components are
-          collectively referred to as "SOYA Orchestrators".<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+          processing service intent and operational state. A variety of terms
+          exist in the industry, including domain orchestrator, network
+          orchestrator, domain controller, and SDN controller. Any platform
+          capable of adhering to the SOYA framework, can be referred to as a
+          SOYA Orchestrator.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
 </section>
 </section>
 <div id="soya-orchestrator">
@@ -1263,9 +1265,10 @@ svg {
 <p id="section-2-1">
         A SOYA Orchestrator is a software component capable of receiving,
         storing, and processing service intent. In a SOYA Orchestrator, intent
-        is stored in a datastore as defined in RFC 7950.
-        SOYA Orchestrators must implement, at a minimum, the running-config
-        datastore as defined in <span>[<a href="#RFC8342" class="cite xref">RFC8342</a>]</span>.<a href="#section-2-1" class="pilcrow">¶</a></p>
+        is stored in a datastore as defined in <span>[<a href="#RFC7950" class="cite xref">RFC7950</a>]</span>.
+        SOYA Orchestrators must implement, at a minimum, the
+        &lt;running-config&gt; datastore as defined in
+        <span><a href="https://rfc-editor.org/rfc/rfc8342#section-5.1.3" class="relref">Section 5.1.3</a> of [<a href="#RFC8342" class="cite xref">RFC8342</a>]</span>.<a href="#section-2-1" class="pilcrow">¶</a></p>
 <p id="section-2-2">
         Processing each received intent update involves executing the
         SOYA Orchestrator's business logic. Typically, this will result in a
@@ -1274,7 +1277,7 @@ svg {
 <p id="section-2-3">
         The SOYA Orchestrator may also support receiving/collecting operational
         state from its managed devices or from the service layer below. Upon
-        receiving operational state updates, the SOYA Orchestrator SHOULD
+        receiving operational state updates, the SOYA Orchestrator should
         persist them in its datastore. Processing each received operational
         state update involves analyzing it according to its business logic and
         determining the necessary actions. Those may include updating the SOYA
@@ -1410,17 +1413,9 @@ svg {
 <a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
-<dt id="RFC2119">[RFC2119]</dt>
-        <dd>
-<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc2119">https://www.rfc-editor.org/info/rfc2119</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="RFC7950">[RFC7950]</dt>
         <dd>
 <span class="refAuthor">Bjorklund, M., Ed.</span>, <span class="refTitle">"The YANG 1.1 Data Modeling Language"</span>, <span class="seriesInfo">RFC 7950</span>, <span class="seriesInfo">DOI 10.17487/RFC7950</span>, <time datetime="2016-08" class="refDate">August 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7950">https://www.rfc-editor.org/info/rfc7950</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC8174">[RFC8174]</dt>
-        <dd>
-<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8174">https://www.rfc-editor.org/info/rfc8174</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC8342">[RFC8342]</dt>
       <dd>

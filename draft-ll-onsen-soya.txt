@@ -115,9 +115,9 @@ Table of Contents
    datastore as defined in Section 5.1.3 of [RFC8342].
 
    Processing each received intent update involves executing the SOYA
-   Orchestrator's business logic.  Typically, this will result in a
-   corresponding output intent for next orchestration layer down; or for
-   the managed device(s) in case of the lowest service layer.
+   Orchestrator's business logic for that layer.  The business logic is
+   responiblefor producing an output intent for the next layer down; or
+   for the managed device(s) in case of the lowest service layer.
 
    The SOYA Orchestrator may also support receiving/collecting
    operational state from its managed devices or from the service layer
@@ -134,17 +134,29 @@ Table of Contents
 
 2.1.  Single-Layer Orchestrator
 
-   A single-layer SOYA Orchestrator is responsible for managing network
-   services at a specific layer of abstraction.  It processes service
-   intents and operational state relevant to its layer and interacts
-   with both the higher orchestration layer (if any) and the lower
-   orchestration layer or managed devices.
+   A single-layer SOYA Orchestrator stores and processes service intents
+   and operational state at a specific layer of abstraction.  It
+   processes service intents and operational state relevant to its layer
+   and interacts with both the higher orchestration layer (if any) and
+   the lower orchestration layer or managed devices.
 
 2.2.  Multi-Layer Orchestrator
 
-   A multi-layer SOYA Orchestrator is capable of managing network
-   services on multiple layers of abstraction within a single SOYA
-   Orchestrator.
+   A multi-layer SOYA Orchestrator is capable of storing and processing
+   service intents and operational state on multiple layers of
+   abstraction within a single orchestrator instance.  The orchestrator
+   must ensure that the layering principles as described in Section 3
+   are adhered to for each individual abstraction layer that it hosts.
+
+   In a multi-layer SOYA Orchestrator, the implementation must be
+   written such that proper layering and separation of concerns are
+   maintained at all times.  Each individual layer must be thought of as
+   its own YANG datastore in its own namespace.  As an intent update
+   triggers the business logic on a particular layer, that layer's
+   business logic must only access (read) intent data (configuration)
+   within its own layer.  The business logic may produce an update to
+   the configuration on the layer just below it as described in
+   Section 3.1.
 
 3.  Service Layering
 

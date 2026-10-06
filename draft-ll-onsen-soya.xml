@@ -113,8 +113,8 @@
       </t>
       <t>
         Processing each received intent update involves executing the
-        SOYA Orchestrator's business logic. Typically, this will result in a
-        corresponding output intent for next orchestration layer down; or for
+        SOYA Orchestrator's business logic for that layer. The business logic is
+        responiblefor producing an output intent for the next layer down; or for
         the managed device(s) in case of the lowest service layer.
       </t>
       <t>
@@ -133,18 +133,33 @@
       <section anchor="single-layer-orchestrator">
         <name>Single-Layer Orchestrator</name>
         <t>
-          A single-layer SOYA Orchestrator is responsible for managing network
-          services at a specific layer of abstraction. It processes service
-          intents and operational state relevant to its layer and interacts with
-          both the higher orchestration layer (if any) and the lower
-          orchestration layer or managed devices.
+          A single-layer SOYA Orchestrator stores and processes service intents
+          and operational state at a specific layer of abstraction. It processes
+          service intents and operational state relevant to its layer and
+          interacts with both the higher orchestration layer (if any) and the
+          lower orchestration layer or managed devices.
         </t>
       </section>
       <section anchor="multi-layer-orchestrator">
         <name>Multi-Layer Orchestrator</name>
         <t>
-          A multi-layer SOYA Orchestrator is capable of managing network services
-          on multiple layers of abstraction within a single SOYA Orchestrator.
+          A multi-layer SOYA Orchestrator is capable of storing and processing
+          service intents and operational state on multiple layers of
+          abstraction within a single orchestrator instance. The orchestrator
+          must ensure that the layering principles as described in <xref
+          target="service-layering"/> are adhered to for each individual
+          abstraction layer that it hosts.
+        </t>
+        <t>
+          In a multi-layer SOYA Orchestrator, the implementation must
+          be written such that proper layering and separation of concerns are
+          maintained at all times. Each individual layer must be thought of
+          as its own YANG datastore in its own namespace. As an intent update
+          triggers the business logic on a particular layer, that layer's
+          business logic must only access (read) intent data (configuration)
+          within its own layer. The business logic may produce an update to the
+          configuration on the layer just below it as described in
+          <xref target="propagating-service-intent-down"/>.
         </t>
       </section>
     </section>
@@ -155,12 +170,12 @@
         each responsible for a specific level of abstraction in managing network
         services. The schema for each layer is defined by a set of YANG models.
       </t>
-      <section>
+      <section anchor="propagating-service-intent-down">
         <name>Propagating Service Intent Down</name>
         <t>TODO</t>
       </section>
 
-      <section>
+      <section anchor="propagating-operational-state-up">
         <name>Propagating Operational State Up</name>
         <t>TODO</t>
       </section>

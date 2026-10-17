@@ -10,14 +10,20 @@
 <meta content="
        
         This document defines the Service Orchestration with YANG-modeled
-        Abstractions (SOYA) Framework for building layered orchestration systems
-        using YANG models, and specifies the interactions between different
-        orchestration layers.
+        Abstractions (SOYA) framework for building layered orchestration
+        systems. Each layer exposes YANG-modeled service intent and operational
+        state, and uses business logic to translate intent into configuration
+        for the layer below. The framework describes the boundaries between
+        layers, the propagation of configuration and state, and the separation
+        of service processing from management protocol implementation. These
+        principles apply to layers hosted within one orchestrator or
+        distributed across several orchestrators.
        
     " name="description">
 <meta content="xml2rfc 3.34.1" name="generator">
 <meta content="yang" name="keyword">
-<meta content="mapping" name="keyword">
+<meta content="orchestration" name="keyword">
+<meta content="service abstraction" name="keyword">
 <meta content="draft-ll-onsen-soya-latest" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.34.1
@@ -1052,7 +1058,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Lambrechts &amp; Larsson</td>
-<td class="center">Expires 9 April 2027</td>
+<td class="center">Expires 20 April 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1065,12 +1071,12 @@ svg {
 <dd class="internet-draft">draft-ll-onsen-soya-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-10-06" class="published">6 October 2026</time>
+<time datetime="2026-10-17" class="published">17 October 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-04-09">9 April 2027</time></dd>
+<dd class="expires"><time datetime="2027-04-20">20 April 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1089,9 +1095,14 @@ svg {
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">
         This document defines the Service Orchestration with YANG-modeled
-        Abstractions (SOYA) Framework for building layered orchestration systems
-        using YANG models, and specifies the interactions between different
-        orchestration layers.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+        Abstractions (SOYA) framework for building layered orchestration
+        systems. Each layer exposes YANG-modeled service intent and operational
+        state, and uses business logic to translate intent into configuration
+        for the layer below. The framework describes the boundaries between
+        layers, the propagation of configuration and state, and the separation
+        of service processing from management protocol implementation. These
+        principles apply to layers hosted within one orchestrator or
+        distributed across several orchestrators.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1112,7 +1123,7 @@ svg {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 9 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 20 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1145,7 +1156,10 @@ svg {
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
-                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-definition-of-soya-orchestr" class="internal xref">Definition of SOYA Orchestrator</a></p>
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-scope-and-relationship-to-e" class="internal xref">Scope and Relationship to Existing Work</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
 </li>
             </ul>
 </li>
@@ -1153,10 +1167,13 @@ svg {
             <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-the-soya-orchestrator" class="internal xref">The SOYA Orchestrator</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
-                <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-single-layer-orchestrator" class="internal xref">Single-Layer Orchestrator</a></p>
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-single-layer-orchestrator" class="internal xref">Single-Layer Orchestrator</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
                 <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-multi-layer-orchestrator" class="internal xref">Multi-Layer Orchestrator</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
+                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="auto internal xref">2.3</a>.  <a href="#name-service-layers-and-datastor" class="internal xref">Service Layers and Datastores</a></p>
 </li>
             </ul>
 </li>
@@ -1168,36 +1185,47 @@ svg {
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
                 <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-propagating-operational-sta" class="internal xref">Propagating Operational State Up</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2.2.1">
+                    <p id="section-toc.1-1.3.2.2.2.1.1"><a href="#section-3.2.1" class="auto internal xref">3.2.1</a>.  <a href="#name-sain-integration" class="internal xref">SAIN Integration</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-service-dependencies-and-co" class="internal xref">Service Dependencies and Configuration Ownership</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-service-realization-and-rec" class="internal xref">Service Realization and Reconciliation</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
-            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-northbound-interfaces" class="internal xref">Northbound Interfaces</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-netconf" class="internal xref">NETCONF</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
-                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-restconf" class="internal xref">RESTCONF</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-example-of-layered-l3vpn-se" class="internal xref">Example of Layered L3VPN Service Delivery</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-southbound-interfaces" class="internal xref">Southbound Interfaces</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-northbound-interfaces" class="internal xref">Northbound Interfaces</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
-                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-netconf-2" class="internal xref">NETCONF</a></p>
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-netconf" class="internal xref">NETCONF</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
-                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-restconf-2" class="internal xref">RESTCONF</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
-                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-non-yang-interfaces" class="internal xref">Non-YANG Interfaces</a></p>
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-restconf" class="internal xref">RESTCONF</a></p>
 </li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-acknowledgements" class="internal xref">Acknowledgements</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-southbound-interfaces" class="internal xref">Southbound Interfaces</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-netconf-2" class="internal xref">NETCONF</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-restconf-2" class="internal xref">RESTCONF</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
+                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-non-yang-interfaces" class="internal xref">Non-YANG Interfaces</a></p>
+</li>
+            </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
             <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
@@ -1211,6 +1239,9 @@ svg {
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
                 <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
 </li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
@@ -1220,83 +1251,144 @@ svg {
 </nav>
 </section>
 </div>
+<div id="introduction">
 <section id="section-1">
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
 <p id="section-1-1">
-        The YANG Data Modeling Language (<span>[<a href="#RFC7950" class="cite xref">RFC7950</a>]</span>) has become
-        ubiquitous in modern network management and is widely adopted for
-        modeling configuration and state data for network devices. YANG equally
-        lends itself to describing higher-level orchestration intent at various
-        layers of abstraction.<a href="#section-1-1" class="pilcrow">¶</a></p>
+        The YANG Data Modeling Language (<span>[<a href="#RFC7950" class="cite xref">RFC7950</a>]</span>) describes
+        configuration, state data, operations, and notifications. It can model
+        both individual network devices and service abstractions spanning
+        multiple devices. A service abstraction allows a client to request
+        an outcome at one level of detail while the system providing that
+        service determines how to realize it.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">
         This document defines the Service Orchestration with
-        YANG-modeled Abstractions (SOYA) Framework for building layered
-        orchestration systems. Each layer allows for the expression of a service
-        intent, according to a set of YANG models. These layers may be hosted on
-        separate SOYA Orchestrators or within a single SOYA Orchestrator,
-        depending on the deployment architecture.<a href="#section-1-2" class="pilcrow">¶</a></p>
+        YANG-modeled Abstractions (SOYA) framework. Each service layer exposes
+        a YANG schema, accepts intent expressed through that schema, and
+        translates it into configuration for the next layer. The business
+        logic at each layer implements the translation and determines how
+        observations from below affect the service it provides. This division
+        allows a layer's implementation to evolve while its service interface
+        remains stable.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">
-        Service intent, e.g. configuration, flows from the highest abstraction
-        layer down to the managed devices. Operational state, on the
-        other hand, flows from the devices up to the higher abstraction layers.
-        The framework specifies permissible data exchanges between different
-        abstraction layers, both within a single SOYA Orchestrator and across
-        multiple SOYA Orchestrators.<a href="#section-1-3" class="pilcrow">¶</a></p>
+        Intent flows down through successive abstractions to device
+        configuration. Operational state flows up as each layer evaluates the
+        state of its dependencies and publishes the state of its own services.
+        These relationships are logical: the layers may run within one SOYA
+        Orchestrator or be distributed across several SOYA Orchestrators.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<div id="scope">
 <section id="section-1.1">
-        <h3 id="name-definition-of-soya-orchestr">
-<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-definition-of-soya-orchestr" class="section-name selfRef">Definition of SOYA Orchestrator</a>
+        <h3 id="name-scope-and-relationship-to-e">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-scope-and-relationship-to-e" class="section-name selfRef">Scope and Relationship to Existing Work</a>
         </h3>
-<p id="section-1.1-1">In the context of this document, a SOYA Orchestrator refers to a
-          software component responsible for managing network services by
-          processing service intent and operational state. A variety of terms
-          exist in the industry, including domain orchestrator, network
-          orchestrator, domain controller, and SDN controller. Any platform
-          capable of adhering to the SOYA framework, can be referred to as a
-          SOYA Orchestrator.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-1">
+          <span>[<a href="#RFC8309" class="cite xref">RFC8309</a>]</span> describes network service models, and
+          <span>[<a href="#RFC8969" class="cite xref">RFC8969</a>]</span> provides a framework for automating service
+          and network management with YANG. SOYA develops the layer boundaries
+          and processing rules for an orchestration system built around such
+          models. Existing service, network, and device models can be used at
+          suitable layers.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">
+          SOYA leaves the number of layers, their schemas, and their business
+          logic to the deployment. A layer may decompose one service into
+          several lower-layer service instances, or combine several inputs
+          into configuration for a shared resource. YANG defines the data and
+          its constraints; executable business logic supplies the mapping
+          between abstractions. The framework accommodates different mapping
+          implementations and management protocols without prescribing a
+          common service schema or a distributed transaction mechanism.<a href="#section-1.1-2" class="pilcrow">¶</a></p>
 </section>
+</div>
+<div id="terminology">
+<section id="section-1.2">
+        <h3 id="name-terminology">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-terminology" class="section-name selfRef">Terminology</a>
+        </h3>
+<p id="section-1.2-1">
+          This document uses the following terms. Datastore terminology follows
+          the Network Management Datastore Architecture (NMDA)
+          (<span>[<a href="#RFC8342" class="cite xref">RFC8342</a>]</span>).<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-1.2-2">
+          <dt id="section-1.2-2.1">Service layer:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-2.2">A level of abstraction with its own YANG schema, logical
+            datastore context, and business logic. Its configuration expresses
+            the services requested from that layer.<a href="#section-1.2-2.2" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.2-2.3">Service intent:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-2.4">The desired configuration of a service instance, expressed as
+            "config true" data in a layer's YANG models. The level of detail
+            depends on the layer providing the service.<a href="#section-1.2-2.4" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.2-2.5">Service instance:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-2.6">An identifiable instance of a service described by a layer's
+            models. It may depend on several services or resources below it.<a href="#section-1.2-2.6" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.2-2.7">Business logic:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-2.8">The processing that maps a layer's intent to lower-layer
+            configuration, applies service policies, and derives the layer's
+            service state from observations.<a href="#section-1.2-2.8" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.2-2.9">SOYA Orchestrator:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-2.10">A software component that hosts one or more service layers and
+            executes their business logic. Platforms described as service
+            orchestrators, domain controllers, or SDN controllers can perform
+            this role when they follow the SOYA layering rules.<a href="#section-1.2-2.10" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-1.2-2.11">Adapter:</dt>
+          <dd style="margin-left: 1.5em" id="section-1.2-2.12">A component that exposes YANG-modeled configuration and state
+            while implementing the native management protocol of a device
+            whose interface does not use YANG.<a href="#section-1.2-2.12" class="pilcrow">¶</a>
+</dd>
+        <dd class="break"></dd>
+</dl>
 </section>
+</div>
+</section>
+</div>
 <div id="soya-orchestrator">
 <section id="section-2">
       <h2 id="name-the-soya-orchestrator">
 <a href="#section-2" class="section-number selfRef">2. </a><a href="#name-the-soya-orchestrator" class="section-name selfRef">The SOYA Orchestrator</a>
       </h2>
 <p id="section-2-1">
-        A SOYA Orchestrator is a software component capable of receiving,
-        storing, and processing service intent. In a SOYA Orchestrator, intent
-        is stored in a datastore as defined in <span>[<a href="#RFC7950" class="cite xref">RFC7950</a>]</span>.
-        SOYA Orchestrators must implement, at a minimum, the
-        &lt;running-config&gt; datastore as defined in
-        <span><a href="https://rfc-editor.org/rfc/rfc8342#section-5.1.3" class="relref">Section 5.1.3</a> of [<a href="#RFC8342" class="cite xref">RFC8342</a>]</span>.<a href="#section-2-1" class="pilcrow">¶</a></p>
+        A SOYA Orchestrator receives, stores, and processes service intent for
+        each layer it hosts. Each layer must provide, at a minimum, a logical
+        &lt;running&gt; configuration datastore as defined in
+        <span><a href="https://rfc-editor.org/rfc/rfc8342#section-5.1.3" class="relref">Section 5.1.3</a> of [<a href="#RFC8342" class="cite xref">RFC8342</a>]</span>. Its
+        contents represent the current intent accepted by that layer.<a href="#section-2-1" class="pilcrow">¶</a></p>
 <p id="section-2-2">
-        Processing each received intent update involves executing the
-        SOYA Orchestrator's business logic for that layer. The business logic is
-        responiblefor producing an output intent for the next layer down; or for
-        the managed device(s) in case of the lowest service layer.<a href="#section-2-2" class="pilcrow">¶</a></p>
+        A change to the running configuration triggers the layer's business
+        logic. That logic determines the configuration needed at the next
+        lower layer. At the lowest service layer, it determines device
+        configuration, submitted through a YANG-based device interface or an
+        adapter. Creation, modification, and deletion of service instances all
+        follow this processing model.<a href="#section-2-2" class="pilcrow">¶</a></p>
 <p id="section-2-3">
-        The SOYA Orchestrator may also support receiving/collecting operational
-        state from its managed devices or from the service layer below. Upon
-        receiving operational state updates, the SOYA Orchestrator should
-        persist them in its datastore. Processing each received operational
-        state update involves analyzing it according to its business logic and
-        determining the necessary actions. Those may include updating the SOYA
-        Orchestrator's internal state, generating new service intents for the
-        lower layer, or triggering specific configuration changes on managed
-        devices. The SOYA Orchestrator can also propagate operational state
-        updates to the next orchestration layer up. The SOYA Orchestrator can
-        also generate notifications or raise alarms.<a href="#section-2-3" class="pilcrow">¶</a></p>
+        A layer may also collect operational state from other layers or from
+        the devices it manages. Its business logic evaluates these observations
+        and may update its own service state, generate notifications or alarms,
+        or revise configuration for the next lower layer. Reactions to state
+        follow the same configuration ownership and layering rules as the
+        processing of incoming intent. Only the lowest service layer generates
+        device configuration.<a href="#section-2-3" class="pilcrow">¶</a></p>
 <div id="single-layer-orchestrator">
 <section id="section-2.1">
         <h3 id="name-single-layer-orchestrator">
 <a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-single-layer-orchestrator" class="section-name selfRef">Single-Layer Orchestrator</a>
         </h3>
 <p id="section-2.1-1">
-          A single-layer SOYA Orchestrator stores and processes service intents
-          and operational state at a specific layer of abstraction. It processes
-          service intents and operational state relevant to its layer and
-          interacts with both the higher orchestration layer (if any) and the
-          lower orchestration layer or managed devices.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+          A single-layer SOYA Orchestrator hosts one service layer. Its
+          northbound interface accepts intent and exposes state for that
+          layer. Its southbound integration delivers generated configuration
+          to the next layer or to managed devices. Several single-layer
+          orchestrators can form a complete orchestration stack.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="multi-layer-orchestrator">
@@ -1305,21 +1397,43 @@ svg {
 <a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-multi-layer-orchestrator" class="section-name selfRef">Multi-Layer Orchestrator</a>
         </h3>
 <p id="section-2.2-1">
-          A multi-layer SOYA Orchestrator is capable of storing and processing
-          service intents and operational state on multiple layers of
-          abstraction within a single orchestrator instance. The orchestrator
-          must ensure that the layering principles as described in <a href="#service-layering" class="auto internal xref">Section 3</a> are adhered to for each individual
-          abstraction layer that it hosts.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+          A multi-layer SOYA Orchestrator hosts several service layers within
+          one instance. Each layer retains its own schema, logical datastore
+          context, and business logic, following the rules in
+          <a href="#service-layering" class="auto internal xref">Section 3</a>. The implementation may share
+          processes, storage infrastructure, or reusable code while preserving
+          these logical boundaries.<a href="#section-2.2-1" class="pilcrow">¶</a></p>
 <p id="section-2.2-2">
-          In a multi-layer SOYA Orchestrator, the implementation must
-          be written such that proper layering and separation of concerns are
-          maintained at all times. Each individual layer must be thought of
-          as its own YANG datastore in its own namespace. As an intent update
-          triggers the business logic on a particular layer, that layer's
-          business logic must only access (read) intent data (configuration)
-          within its own layer. The business logic may produce an update to the
-          configuration on the layer just below it as described in
-          <a href="#propagating-service-intent-down" class="auto internal xref">Section 3.1</a>.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
+          A layer's business logic reads intent only from its own layer and
+          submits configuration only to the layer immediately below it, or to
+          devices when it is the lowest service layer. Communication between
+          co-located layers may use internal interfaces, provided that schema
+          validation, configuration ownership, and state semantics are
+          preserved. Co-location does not permit bypassing an intermediate
+          layer.<a href="#section-2.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="datastore-context">
+<section id="section-2.3">
+        <h3 id="name-service-layers-and-datastor">
+<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-service-layers-and-datastor" class="section-name selfRef">Service Layers and Datastores</a>
+        </h3>
+<p id="section-2.3-1">
+          A service layer is distinct from an NMDA datastore. The
+          &lt;running&gt;, &lt;intended&gt;, and &lt;operational&gt; datastores
+          are views of data within a layer (<span>[<a href="#RFC8342" class="cite xref">RFC8342</a>]</span>).
+          Transforming configuration from &lt;running&gt; to &lt;intended&gt;
+          within that context is distinct from generating configuration for
+          the next SOYA layer, which has its own schema and datastore context.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
+<p id="section-2.3-2">
+          Under NMDA, &lt;operational&gt; contains configuration currently in
+          use, represented by "config true" nodes, together with system state
+          represented by "config false" nodes. Service health, processing
+          progress, and failure information are examples of derived state that
+          a layer can model using "config false" nodes. A layer should define
+          what it means for its intent to be applied and how that differs
+          from the health of the service being provided. These distinctions
+          allow clients to distinguish accepted intent from observed results.<a href="#section-2.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1330,15 +1444,46 @@ svg {
 <a href="#section-3" class="section-number selfRef">3. </a><a href="#name-service-layering" class="section-name selfRef">Service Layering</a>
       </h2>
 <p id="section-3-1">
-        An overall orchestration system may be comprised of multiple layers,
-        each responsible for a specific level of abstraction in managing network
-        services. The schema for each layer is defined by a set of YANG models.<a href="#section-3-1" class="pilcrow">¶</a></p>
+        A SOYA system consists of one or more service layers, each responsible
+        for a particular abstraction. A layer's schema comprises the YANG
+        modules, enabled features, and deviations supported in that layer's
+        datastore context. YANG validation takes place within that context.
+        XPath expressions, leafrefs, and augmentations must resolve within the
+        layer's schema and data trees; they cannot access another layer's
+        datastore.<a href="#section-3-1" class="pilcrow">¶</a></p>
+<p id="section-3-2">
+        Layers can reuse common modules, types, groupings, and identities.
+        Importing shared definitions, as described in <span>[<a href="#RFC7950" class="cite xref">RFC7950</a>]</span>,
+        does not give access to another layer's data. Similarly, a YANG module
+        retains its namespace when used at more than one layer. The separation
+        between layers is established by their schema and datastore contexts,
+        rather than by assigning a new XML namespace to each layer.<a href="#section-3-2" class="pilcrow">¶</a></p>
 <div id="propagating-service-intent-down">
 <section id="section-3.1">
         <h3 id="name-propagating-service-intent-">
 <a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-propagating-service-intent-" class="section-name selfRef">Propagating Service Intent Down</a>
         </h3>
-<p id="section-3.1-1">TODO<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-1">
+          Intent originating outside the orchestration system enters at the
+          highest service layer through the northbound interfaces described
+          in <a href="#northbound-interfaces" class="auto internal xref">Section 5</a>. Each layer's business logic
+          translates its own intent into configuration for the layer
+          immediately below. The generated configuration becomes the receiving
+          layer's intent and is validated against that layer's schema.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">
+          Lower layers must accept configuration updates only from the layer
+          above. Their configuration may be exposed to authorized outside
+          observers for inspection, but those observers must not modify it.
+          The same ownership rule applies when a state change causes a layer
+          to generate new configuration as part of a recovery action.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">
+          The lowest service layer translates its intent into configuration
+          expressed through the YANG models exposed by the managed device or
+          its adapter. The southbound interfaces described in
+          <a href="#southbound-interfaces" class="auto internal xref">Section 6</a> carry these updates to the
+          target. Protocol implementation belongs to the
+          southbound integration; the business logic determines which
+          configuration is needed to provide the service.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="propagating-operational-state-up">
@@ -1346,63 +1491,391 @@ svg {
         <h3 id="name-propagating-operational-sta">
 <a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-propagating-operational-sta" class="section-name selfRef">Propagating Operational State Up</a>
         </h3>
-<p id="section-3.2-1">TODO<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-1">
+          Each layer's business logic maintains and publishes the state of
+          the services it provides. Derived information, such as service
+          health or realization progress, is exposed as "config false"
+          YANG-modeled data. The distinction between this information and
+          applied configuration is described in
+          <a href="#datastore-context" class="auto internal xref">Section 2.3</a>.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">
+          A layer may read operational state from anywhere in the stack,
+          subject to authorization. The preferred pattern is to consume state
+          from the layer immediately below and publish an abstraction for the
+          layer above. This limits the knowledge that higher layers need of
+          lower-layer implementation details. Access to operational state
+          does not grant authority to modify the observed layer's
+          configuration or use its running configuration as an additional
+          source of intent.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">
+          For example, the lowest service layer may evaluate device interface
+          state to determine whether a tunnel is available. The layer above
+          can combine that tunnel state with other dependencies to determine
+          whether a connectivity service is healthy. A failed interface need
+          not imply a failed service if a working alternative still satisfies
+          the service's requirements. Each layer is responsible for the
+          meaning of the state it publishes.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<section id="section-3.2.1">
+          <h4 id="name-sain-integration">
+<a href="#section-3.2.1" class="section-number selfRef">3.2.1. </a><a href="#name-sain-integration" class="section-name selfRef">SAIN Integration</a>
+          </h4>
+<p id="section-3.2.1-1">
+            The Service Assurance for Intent-Based Networking (SAIN) orchestrator
+            defined in <span>[<a href="#RFC9417" class="cite xref">RFC9417</a>]</span> could be integrated with a SOYA
+            Orchestrator to derive an assurance graph from service intent and the
+            corresponding configuration generated for lower layers and devices.
+            The SOYA orchestrator would configure the SAIN orchestrator with the
+            necessary context about the services and their dependencies through
+            the YANG modules defined in <span>[<a href="#RFC9418" class="cite xref">RFC9418</a>]</span>.<a href="#section-3.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.2.1-2"> The resulting health scores and symptoms,
+            gathered by a SAIN collector, could be fed back to the business logic
+            at the relevant SOYA layer. That layer would map these results to its
+            own service instances and publish the appropriate "config false"
+            operational state for broader consumption. This allows
+            SAIN to provide service assurance while each SOYA layer retains
+            responsibility for the operational state it exposes.<a href="#section-3.2.1-2" class="pilcrow">¶</a></p>
+</section>
 </section>
 </div>
+<div id="configuration-ownership">
+<section id="section-3.3">
+        <h3 id="name-service-dependencies-and-co">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-service-dependencies-and-co" class="section-name selfRef">Service Dependencies and Configuration Ownership</a>
+        </h3>
+<p id="section-3.3-1">
+          Each layer should retain the association between a service instance
+          and the lower-layer objects it creates or uses. These associations
+          support fault correlation, updates, recovery, and removal of obsolete
+          configuration. Stable identifiers allow an observation or failure
+          at a lower layer to be related to the affected service instances.
+          The identifiers and associations are maintained through the layer's
+          internal implementation; they do not require cross-layer references
+          such as YANG leafrefs.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.3-2">
+          One service instance may depend on several lower-layer objects, and
+          one lower-layer object may support several services. The layer
+          generating the configuration is responsible for reconciling these
+          demands and resolving conflicts before submitting an update. If
+          several orchestrator instances host the same logical layer, they
+          need an ownership or coordination mechanism so that their writes do
+          not conflict.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
+<p id="section-3.3-3">
+          Deleting a service removes the configuration that is no longer
+          required for that service. Shared objects must remain while they
+          are needed by other services. A layer should retain enough
+          association and processing state to complete or retry cleanup after
+          an interruption, even if the original intent has already been
+          removed from its running configuration.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="realization-reconciliation">
+<section id="section-3.4">
+        <h3 id="name-service-realization-and-rec">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-service-realization-and-rec" class="section-name selfRef">Service Realization and Reconciliation</a>
+        </h3>
+<p id="section-3.4-1">
+          Schema validation determines whether intent conforms to a layer's
+          YANG schema. Realizing valid intent can still fail because of
+          unavailable resources, service policy, communication failures, or
+          errors at a lower layer. A layer may check feasibility before
+          accepting intent where possible, and reports failures discovered
+          during subsequent processing through its operational state.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+<p id="section-3.4-2">
+          A layer should distinguish acceptance of intent, progress in
+          realizing it, and the resulting service health. The layer's models
+          define the status information and its meaning. Observations should
+          be correlated with the service instance and the intent revision or
+          processing attempt they describe. A delayed result for an older
+          request must not be treated as confirmation that the current
+          request has been realized. Missing or stale observations should be
+          distinguishable from a confirmed service failure.<a href="#section-3.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.4-3">
+          Processing continues after the initial intent update. Following a
+          restart, missed observation, or failed update, a layer reconciles
+          the configuration it has generated with the desired result derived
+          from its current intent. Repeated processing of unchanged intent
+          should converge on the same result without duplicating resources.
+          The southbound integration may retrieve target configuration to
+          synchronize or verify delivery; this does not make target
+          configuration an additional intent source for the layer's business
+          logic.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
+<p id="section-3.4-4">
+          A datastore operation on one target does not provide an atomic
+          transaction across all layers or devices. A layer must account for
+          partial completion and uncertain outcomes, including loss of a
+          response after an update was applied. Its business logic decides
+          whether to retain completed changes, compensate for them, or pursue
+          another realization of the service. The protocol integration or
+          adapter performs the corresponding target operations. Affected
+          service state should remain visible while recovery is in progress.<a href="#section-3.4-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="layering-example">
+<section id="section-4">
+      <h2 id="name-example-of-layered-l3vpn-se">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-example-of-layered-l3vpn-se" class="section-name selfRef">Example of Layered L3VPN Service Delivery</a>
+      </h2>
+<p id="section-4-1">
+        Consider a Layer 3 virtual private network (L3VPN) connecting two
+        customer sites, requested using the L3VPN Service Model (L3SM) in
+        <span>[<a href="#RFC8299" class="cite xref">RFC8299</a>]</span>. The request describes the sites, their
+        network accesses, and connectivity requirements. Three SOYA service
+        layers realize the request, as shown in
+        <a href="#layering-example-figure" class="auto internal xref">Figure 1</a>. The network and device
+        abstraction layers use deployment-specific YANG models.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<span id="name-l3vpn-service-delivery-thro"></span><div id="layering-example-figure">
+<figure id="figure-1">
+        <div class="alignCenter art-ascii-art art-text artwork" id="section-4-2.1">
+<pre>
+              Customer / service application
+                |                        ^
+                | L3SM intent            | L3SM state
+                v                        |
+       +------------------------------------------+
+       | Service layer                            |
+       | L3SM (RFC 8299)                          |
+       +------------------------------------------+
+                |                         ^
+ Network intent |                         | network state
+                v                         |
+       +------------------------------------------+
+       | Network layer                            |
+       | Deployment-specific network model        |
+       +------------------------------------------+
+                |                         ^
+Function intent |                         | function state
+                v                         |
+       +------------------------------------------+
+       | Device function layer                    |
+       | VRFs, customer interfaces, ...           |
+       +------------------------------------------+
+                |                         ^
+  Device config |                         | device state
+                v                         |
+       +------------------------------------------+
+       | Device model level                       |
+       | YANG-capable devices or adapters         |
+       +------------------------------------------+
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-l3vpn-service-delivery-thro" class="selfRef">L3VPN Service Delivery Through Abstraction Layers</a>
+        </figcaption></figure>
+</div>
+<p id="section-4-3">
+        The service layer maps the customer sites and requirements to
+        provider-network endpoints and connectivity. It expresses the result
+        as configuration in the deployment's network model, which becomes the
+        network layer's intent.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4">
+        The network layer decomposes that intent into requests for functions
+        on selected devices: for example, a virtual routing and forwarding
+        (VRF) instance, routed interfaces, BGP neighbors, and bandwidth
+        policies. These requests form the intent consumed by the device
+        abstraction layer.<a href="#section-4-4" class="pilcrow">¶</a></p>
+<p id="section-4-5">
+        The device abstraction layer translates function requests into
+        configuration conforming to each target's supported device models.
+        Its business logic handles differences in device schemas and
+        capabilities. The southbound integration or YANG-facing adapter
+        performs all management protocol operations, as described in
+        <a href="#southbound-interfaces" class="auto internal xref">Section 6</a>.<a href="#section-4-5" class="pilcrow">¶</a></p>
+<p id="section-4-6">
+        If an interface fails, the device abstraction layer reports the
+        affected function's state. The network layer associates that function
+        with the VPN connectivity it provides, and the service layer derives
+        the customer-facing service state through (augmentations to) the L3SM.
+        Any recovery action follows the same layer boundaries.<a href="#section-4-6" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="northbound-interfaces">
-<section id="section-4">
+<section id="section-5">
       <h2 id="name-northbound-interfaces">
-<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-northbound-interfaces" class="section-name selfRef">Northbound Interfaces</a>
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-northbound-interfaces" class="section-name selfRef">Northbound Interfaces</a>
       </h2>
-<p id="section-4-1">TODO<a href="#section-4-1" class="pilcrow">¶</a></p>
-<section id="section-4.1">
+<p id="section-5-1">
+        A northbound interface exposes the YANG-modeled service intent and
+        operational state of an orchestration layer. At the highest layer,
+        clients may include operations support systems and business support
+        systems (OSS/BSS), customer portals, or other applications. At a lower
+        layer, the client submitting intent is the
+        SOYA Orchestrator hosting the layer immediately above, as described in
+        <a href="#propagating-service-intent-down" class="auto internal xref">Section 3.1</a>. The same interface
+        therefore serves as the northbound interface of the lower layer and
+        the southbound interface of the upper layer.<a href="#section-5-1" class="pilcrow">¶</a></p>
+<p id="section-5-2">
+        Each interface must preserve the schema and datastore boundaries of
+        the layer it exposes. A multi-layer SOYA Orchestrator may use separate
+        endpoints or explicitly selected logical server contexts. Each context
+        exposes the datastores and schema of the selected layer. Clients
+        should be able to discover its supported modules, revisions, features,
+        and deviations using YANG Library (<span>[<a href="#RFC8525" class="cite xref">RFC8525</a>]</span>). The
+        deployment defines how the client selects a layer; YANG Library
+        describes the schema within that context. If multiple protocols
+        expose the same layer, they must provide a consistent view of its
+        data. Access control must enforce the ownership rules in
+        <a href="#configuration-ownership" class="auto internal xref">Section 3.3</a> and
+        <a href="#propagating-service-intent-down" class="auto internal xref">Section 3.1</a>.<a href="#section-5-2" class="pilcrow">¶</a></p>
+<p id="section-5-3">
+        Incoming intent is validated against the receiving layer's schema
+        before it is accepted into the running configuration. Changes to the
+        running configuration trigger that layer's business logic. A successful
+        protocol response confirms completion of the requested datastore
+        operation. The layer's operational state reports the progress and
+        outcome of service realization separately, as described in
+        <a href="#realization-reconciliation" class="auto internal xref">Section 3.4</a>.<a href="#section-5-3" class="pilcrow">¶</a></p>
+<p id="section-5-4">
+        Clients may retrieve operational state on demand. An implementation
+        may also offer notifications or datastore subscriptions, such as
+        YANG-Push (<span>[<a href="#RFC8641" class="cite xref">RFC8641</a>]</span>), using supported protocol
+        bindings. Clients need to account for interruptions in state delivery
+        and obtain a current view after reconnecting.<a href="#section-5-4" class="pilcrow">¶</a></p>
+<section id="section-5.1">
         <h3 id="name-netconf">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-netconf" class="section-name selfRef">NETCONF</a>
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-netconf" class="section-name selfRef">NETCONF</a>
         </h3>
-<p id="section-4.1-1">TODO<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-1">
+          A SOYA Orchestrator may expose a layer as a NETCONF server
+          (<span>[<a href="#RFC6241" class="cite xref">RFC6241</a>]</span>). Clients submit intent using
+          &lt;edit-config&gt; against &lt;running&gt; when the
+          :writable-running capability is advertised, or against
+          &lt;candidate&gt; followed by &lt;commit&gt; when the :candidate
+          capability is advertised. Edits to &lt;candidate&gt; alone do not
+          trigger realization of the intent. Validation failures and other
+          request errors are returned as &lt;rpc-error&gt; elements.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1-2">
+          Clients retrieve configuration with &lt;get-config&gt; and running
+          configuration together with state data with &lt;get&gt;. When the
+          NETCONF NMDA extensions are supported (<span>[<a href="#RFC8526" class="cite xref">RFC8526</a>]</span>),
+          &lt;get-data&gt; provides explicit access to &lt;operational&gt;,
+          including applied configuration. The configuration returned by the
+          legacy &lt;get&gt; operation is the running configuration and should
+          not be treated as evidence of what has been applied.<a href="#section-5.1-2" class="pilcrow">¶</a></p>
 </section>
-<section id="section-4.2">
+<section id="section-5.2">
         <h3 id="name-restconf">
-<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-restconf" class="section-name selfRef">RESTCONF</a>
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-restconf" class="section-name selfRef">RESTCONF</a>
         </h3>
-<p id="section-4.2-1">TODO<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2-1">
+          A SOYA Orchestrator may expose a layer as a RESTCONF server
+          (<span>[<a href="#RFC8040" class="cite xref">RFC8040</a>]</span>). Service instances are represented as
+          YANG data resources using XML or JSON encoding. Clients create
+          intent resources using POST or PUT, replace them using PUT, modify
+          them using PATCH, and delete them using DELETE. GET retrieves
+          configuration and operational state. HTTP status codes and RESTCONF
+          error responses report request failures. Clients should use
+          conditional requests with entity-tags to avoid overwriting
+          concurrent changes.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2-2">
+          When the RESTCONF NMDA extensions are supported
+          (<span>[<a href="#RFC8527" class="cite xref">RFC8527</a>]</span>), clients can explicitly retrieve the
+          layer's operational datastore through the
+          {+restconf}/ds/ietf-datastores:operational resource.<a href="#section-5.2-2" class="pilcrow">¶</a></p>
 </section>
 </section>
 </div>
 <div id="southbound-interfaces">
-<section id="section-5">
-      <h2 id="name-southbound-interfaces">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-southbound-interfaces" class="section-name selfRef">Southbound Interfaces</a>
-      </h2>
-<p id="section-5-1">TODO<a href="#section-5-1" class="pilcrow">¶</a></p>
-<section id="section-5.1">
-        <h3 id="name-netconf-2">
-<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-netconf-2" class="section-name selfRef">NETCONF</a>
-        </h3>
-<p id="section-5.1-1">TODO<a href="#section-5.1-1" class="pilcrow">¶</a></p>
-</section>
-<section id="section-5.2">
-        <h3 id="name-restconf-2">
-<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-restconf-2" class="section-name selfRef">RESTCONF</a>
-        </h3>
-<p id="section-5.2-1">TODO<a href="#section-5.2-1" class="pilcrow">¶</a></p>
-</section>
-<section id="section-5.3">
-        <h3 id="name-non-yang-interfaces">
-<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-non-yang-interfaces" class="section-name selfRef">Non-YANG Interfaces</a>
-        </h3>
-<p id="section-5.3-1">TODO<a href="#section-5.3-1" class="pilcrow">¶</a></p>
-</section>
-</section>
-</div>
-<div id="acknowledgements">
 <section id="section-6">
-      <h2 id="name-acknowledgements">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-acknowledgements" class="section-name selfRef">Acknowledgements</a>
+      <h2 id="name-southbound-interfaces">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-southbound-interfaces" class="section-name selfRef">Southbound Interfaces</a>
       </h2>
-<p id="section-6-1">TODO<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-1">
+        A southbound interface carries the configuration generated by a
+        layer's business logic to the next lower orchestration layer, or to
+        managed devices at the lowest service layer. The SOYA Orchestrator
+        acts as a client of the receiving system. Its business logic translates
+        intent into configuration that conforms to the receiving system's
+        schema. The interface also provides access to operational state that
+        the business logic uses to derive its own layer's state.<a href="#section-6-1" class="pilcrow">¶</a></p>
+<p id="section-6-2">
+        The northbound and southbound protocols of a SOYA Orchestrator need
+        not be the same. For example, intent received over RESTCONF may result
+        in configuration delivered over NETCONF. The business logic determines
+        the configuration to generate, while the southbound integration
+        handles protocol operations and target capabilities. For YANG-based
+        targets, this includes discovering the supported schema through YANG
+        Library (<span>[<a href="#RFC8525" class="cite xref">RFC8525</a>]</span>), where available.<a href="#section-6-2" class="pilcrow">¶</a></p>
+<p id="section-6-3">
+        The integration reports configuration results and communication
+        failures to the sending layer. Protocol-level retries and recovery
+        are performed by the integration, while the business logic decides
+        how to respond at the service level. The reconciliation rules in
+        <a href="#realization-reconciliation" class="auto internal xref">Section 3.4</a> apply when several
+        targets are involved or an operation's outcome is uncertain.<a href="#section-6-3" class="pilcrow">¶</a></p>
+<section id="section-6.1">
+        <h3 id="name-netconf-2">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-netconf-2" class="section-name selfRef">NETCONF</a>
+        </h3>
+<p id="section-6.1-1">
+          For a NETCONF southbound interface, the SOYA Orchestrator acts as a
+          NETCONF client (<span>[<a href="#RFC6241" class="cite xref">RFC6241</a>]</span>). It inspects the server's
+          advertised capabilities and selects the appropriate configuration
+          workflow, such as editing &lt;candidate&gt; and committing it, or
+          editing &lt;running&gt; directly. Locking coordinates edits to shared
+          datastores. Optional validation, confirmed-commit, and
+          rollback-on-error capabilities provide additional controls when
+          supported. A failed edit can leave partial changes depending on the
+          selected error handling. After an error or a lost response, the
+          client determines the target's state before retrying operations
+          that could conflict with previous work.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1-2">
+          The client processes &lt;rpc-error&gt; replies and retrieves
+          configuration with &lt;get-config&gt; and running configuration
+          together with state data with &lt;get&gt;. With the NMDA extensions
+          (<span>[<a href="#RFC8526" class="cite xref">RFC8526</a>]</span>), &lt;get-data&gt; on
+          &lt;operational&gt; provides applied configuration and system state.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+</section>
+<section id="section-6.2">
+        <h3 id="name-restconf-2">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-restconf-2" class="section-name selfRef">RESTCONF</a>
+        </h3>
+<p id="section-6.2-1">
+          For a RESTCONF southbound interface, the SOYA Orchestrator acts as a
+          RESTCONF client (<span>[<a href="#RFC8040" class="cite xref">RFC8040</a>]</span>). It maps the generated
+          configuration to the target's YANG data resources and applies it
+          using the appropriate HTTP methods. Conditional requests can protect
+          updates against concurrent changes. The client processes HTTP status
+          codes and RESTCONF errors, and retrieves operational state using GET,
+          including access to the operational datastore when the target
+          supports the NMDA extensions (<span>[<a href="#RFC8527" class="cite xref">RFC8527</a>]</span>).<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+</section>
+<section id="section-6.3">
+        <h3 id="name-non-yang-interfaces">
+<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-non-yang-interfaces" class="section-name selfRef">Non-YANG Interfaces</a>
+        </h3>
+<p id="section-6.3-1">
+          Managed devices may expose interfaces that do not use YANG, such as
+          a command-line interface, SNMP, or a vendor-specific API. Such devices
+          can be integrated through an adapter that exposes a YANG-modeled
+          interface to the lowest service layer for both configuration and
+          operational state.<a href="#section-6.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.3-2">
+          The adapter is responsible for all operations associated with
+          implementing the device's management protocol. This includes protocol
+          communication, translation between YANG-modeled data and native
+          device representations, command sequencing and execution, state
+          collection, and protocol-specific error handling. Protocol-specific
+          validation, retries, and rollback are also implemented by the adapter
+          where supported. The adapter exposes collected device state and
+          configuration operation results through its YANG-modeled interface,
+          together with any limitations in the operations it supports. The
+          exposed models should provide a way to indicate unavailable or stale
+          state. The adapter uses those model-defined semantics so that a
+          missing observation is distinguishable from a confirmed failure or
+          successful operation.<a href="#section-6.3-2" class="pilcrow">¶</a></p>
+<p id="section-6.3-3">
+          The lowest service layer's business logic consumes the adapter's
+          interface as it would a YANG-modeled device interface. It translates
+          service intent into the configuration submitted to the adapter and
+          uses the state exposed by the adapter to determine and publish the
+          layer's own service-level operational state. Service-level recovery
+          decisions remain with the business logic, based on the results and
+          limitations reported by the adapter. This separates service intent
+          processing from the implementation of the device's management
+          protocol.<a href="#section-6.3-3" class="pilcrow">¶</a></p>
+</section>
 </section>
 </div>
 <div id="IANA">
@@ -1418,7 +1891,39 @@ svg {
       <h2 id="name-security-considerations">
 <a href="#section-8" class="section-number selfRef">8. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
       </h2>
-<p id="section-8-1">TODO<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-1">
+        A SOYA Orchestrator translates accepted intent into changes that may
+        affect many services and devices. Management connections must
+        authenticate their peers and protect the integrity and confidentiality
+        of exchanged data. Each layer must authorize configuration changes,
+        operations, and access to state. NETCONF and RESTCONF deployments can
+        use the Network Configuration Access Control Model
+        (<span>[<a href="#RFC8341" class="cite xref">RFC8341</a>]</span>) to express these permissions.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2">
+        Authorization must preserve the ownership rules described in
+        <a href="#propagating-service-intent-down" class="auto internal xref">Section 3.1</a>. A client permitted
+        to submit intent at the highest layer must not thereby gain write
+        access to lower layers. Co-located layers need equivalent isolation in
+        their internal interfaces. Access to configuration and operational
+        state should also respect tenant boundaries, since either can reveal
+        customer identities, topology, or service dependencies.<a href="#section-8-2" class="pilcrow">¶</a></p>
+<p id="section-8-3">
+        Orchestrator and adapter credentials should be limited to the targets
+        and operations required for their roles. Business logic and adapters
+        are trusted components: faulty or compromised translation code can
+        turn an authorized request into unintended configuration. Schema
+        validation should be supplemented with policy and resource checks
+        appropriate to the service. Configuration generated for a lower layer
+        is subject to that layer's own validation and authorization.<a href="#section-8-3" class="pilcrow">¶</a></p>
+<p id="section-8-4">
+        Operational observations can trigger automated recovery. Their source,
+        integrity, and freshness therefore matter as much as those of incoming
+        intent. A layer should account for stale, replayed, or missing
+        observations before generating changes. Audit records should relate
+        incoming intent, generated configuration, relevant observations, and
+        recovery actions to the affected service instances. Logs and retained
+        associations require protection appropriate to the sensitive data
+        they contain.<a href="#section-8-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <section id="section-9">
@@ -1430,13 +1935,68 @@ svg {
 <a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
         </h3>
 <dl class="references">
+<dt id="RFC6241">[RFC6241]</dt>
+        <dd>
+<span class="refAuthor">Enns, R., Ed.</span>, <span class="refAuthor">Bjorklund, M., Ed.</span>, <span class="refAuthor">Schoenwaelder, J., Ed.</span>, and <span class="refAuthor">A. Bierman, Ed.</span>, <span class="refTitle">"Network Configuration Protocol (NETCONF)"</span>, <span class="seriesInfo">RFC 6241</span>, <span class="seriesInfo">DOI 10.17487/RFC6241</span>, <time datetime="2011-06" class="refDate">June 2011</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc6241">https://www.rfc-editor.org/info/rfc6241</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC7950">[RFC7950]</dt>
         <dd>
 <span class="refAuthor">Bjorklund, M., Ed.</span>, <span class="refTitle">"The YANG 1.1 Data Modeling Language"</span>, <span class="seriesInfo">RFC 7950</span>, <span class="seriesInfo">DOI 10.17487/RFC7950</span>, <time datetime="2016-08" class="refDate">August 2016</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc7950">https://www.rfc-editor.org/info/rfc7950</a>&gt;</span>. </dd>
 <dd class="break"></dd>
+<dt id="RFC8040">[RFC8040]</dt>
+        <dd>
+<span class="refAuthor">Bierman, A.</span>, <span class="refAuthor">Bjorklund, M.</span>, and <span class="refAuthor">K. Watsen</span>, <span class="refTitle">"RESTCONF Protocol"</span>, <span class="seriesInfo">RFC 8040</span>, <span class="seriesInfo">DOI 10.17487/RFC8040</span>, <time datetime="2017-01" class="refDate">January 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8040">https://www.rfc-editor.org/info/rfc8040</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC8342">[RFC8342]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Bjorklund, M.</span>, <span class="refAuthor">Schoenwaelder, J.</span>, <span class="refAuthor">Shafer, P.</span>, <span class="refAuthor">Watsen, K.</span>, and <span class="refAuthor">R. Wilton</span>, <span class="refTitle">"Network Management Datastore Architecture (NMDA)"</span>, <span class="seriesInfo">RFC 8342</span>, <span class="seriesInfo">DOI 10.17487/RFC8342</span>, <time datetime="2018-03" class="refDate">March 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8342">https://www.rfc-editor.org/info/rfc8342</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8525">[RFC8525]</dt>
+        <dd>
+<span class="refAuthor">Bierman, A.</span>, <span class="refAuthor">Bjorklund, M.</span>, <span class="refAuthor">Schoenwaelder, J.</span>, <span class="refAuthor">Watsen, K.</span>, and <span class="refAuthor">R. Wilton</span>, <span class="refTitle">"YANG Library"</span>, <span class="seriesInfo">RFC 8525</span>, <span class="seriesInfo">DOI 10.17487/RFC8525</span>, <time datetime="2019-03" class="refDate">March 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8525">https://www.rfc-editor.org/info/rfc8525</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8526">[RFC8526]</dt>
+        <dd>
+<span class="refAuthor">Bjorklund, M.</span>, <span class="refAuthor">Schoenwaelder, J.</span>, <span class="refAuthor">Shafer, P.</span>, <span class="refAuthor">Watsen, K.</span>, and <span class="refAuthor">R. Wilton</span>, <span class="refTitle">"NETCONF Extensions to Support the Network Management Datastore Architecture"</span>, <span class="seriesInfo">RFC 8526</span>, <span class="seriesInfo">DOI 10.17487/RFC8526</span>, <time datetime="2019-03" class="refDate">March 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8526">https://www.rfc-editor.org/info/rfc8526</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8527">[RFC8527]</dt>
+      <dd>
+<span class="refAuthor">Bjorklund, M.</span>, <span class="refAuthor">Schoenwaelder, J.</span>, <span class="refAuthor">Shafer, P.</span>, <span class="refAuthor">Watsen, K.</span>, and <span class="refAuthor">R. Wilton</span>, <span class="refTitle">"RESTCONF Extensions to Support the Network Management Datastore Architecture"</span>, <span class="seriesInfo">RFC 8527</span>, <span class="seriesInfo">DOI 10.17487/RFC8527</span>, <time datetime="2019-03" class="refDate">March 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8527">https://www.rfc-editor.org/info/rfc8527</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+<section id="section-9.2">
+        <h3 id="name-informative-references">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC8299">[RFC8299]</dt>
+        <dd>
+<span class="refAuthor">Wu, Q., Ed.</span>, <span class="refAuthor">Litkowski, S.</span>, <span class="refAuthor">Tomotaki, L.</span>, and <span class="refAuthor">K. Ogaki</span>, <span class="refTitle">"YANG Data Model for L3VPN Service Delivery"</span>, <span class="seriesInfo">RFC 8299</span>, <span class="seriesInfo">DOI 10.17487/RFC8299</span>, <time datetime="2018-01" class="refDate">January 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8299">https://www.rfc-editor.org/info/rfc8299</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8309">[RFC8309]</dt>
+        <dd>
+<span class="refAuthor">Wu, Q.</span>, <span class="refAuthor">Liu, W.</span>, and <span class="refAuthor">A. Farrel</span>, <span class="refTitle">"Service Models Explained"</span>, <span class="seriesInfo">RFC 8309</span>, <span class="seriesInfo">DOI 10.17487/RFC8309</span>, <time datetime="2018-01" class="refDate">January 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8309">https://www.rfc-editor.org/info/rfc8309</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8341">[RFC8341]</dt>
+        <dd>
+<span class="refAuthor">Bierman, A.</span> and <span class="refAuthor">M. Bjorklund</span>, <span class="refTitle">"Network Configuration Access Control Model"</span>, <span class="seriesInfo">STD 91</span>, <span class="seriesInfo">RFC 8341</span>, <span class="seriesInfo">DOI 10.17487/RFC8341</span>, <time datetime="2018-03" class="refDate">March 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8341">https://www.rfc-editor.org/info/rfc8341</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8641">[RFC8641]</dt>
+        <dd>
+<span class="refAuthor">Clemm, A.</span> and <span class="refAuthor">E. Voit</span>, <span class="refTitle">"Subscription to YANG Notifications for Datastore Updates"</span>, <span class="seriesInfo">RFC 8641</span>, <span class="seriesInfo">DOI 10.17487/RFC8641</span>, <time datetime="2019-09" class="refDate">September 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8641">https://www.rfc-editor.org/info/rfc8641</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8969">[RFC8969]</dt>
+        <dd>
+<span class="refAuthor">Wu, Q., Ed.</span>, <span class="refAuthor">Boucadair, M., Ed.</span>, <span class="refAuthor">Lopez, D.</span>, <span class="refAuthor">Xie, C.</span>, and <span class="refAuthor">L. Geng</span>, <span class="refTitle">"A Framework for Automating Service and Network Management with YANG"</span>, <span class="seriesInfo">RFC 8969</span>, <span class="seriesInfo">DOI 10.17487/RFC8969</span>, <time datetime="2021-01" class="refDate">January 2021</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8969">https://www.rfc-editor.org/info/rfc8969</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9417">[RFC9417]</dt>
+        <dd>
+<span class="refAuthor">Claise, B.</span>, <span class="refAuthor">Quilbeuf, J.</span>, <span class="refAuthor">Lopez, D.</span>, <span class="refAuthor">Voyer, D.</span>, and <span class="refAuthor">T. Arumugam</span>, <span class="refTitle">"Service Assurance for Intent-Based Networking Architecture"</span>, <span class="seriesInfo">RFC 9417</span>, <span class="seriesInfo">DOI 10.17487/RFC9417</span>, <time datetime="2023-07" class="refDate">July 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9417">https://www.rfc-editor.org/info/rfc9417</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9418">[RFC9418]</dt>
+      <dd>
+<span class="refAuthor">Claise, B.</span>, <span class="refAuthor">Quilbeuf, J.</span>, <span class="refAuthor">Lucente, P.</span>, <span class="refAuthor">Fasano, P.</span>, and <span class="refAuthor">T. Arumugam</span>, <span class="refTitle">"A YANG Data Model for Service Assurance"</span>, <span class="seriesInfo">RFC 9418</span>, <span class="seriesInfo">DOI 10.17487/RFC9418</span>, <time datetime="2023-07" class="refDate">July 2023</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc9418">https://www.rfc-editor.org/info/rfc9418</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>

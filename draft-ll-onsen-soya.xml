@@ -44,8 +44,8 @@
 
     <date year="2026"/>
 
-    <area>General</area>
-    <workgroup>Internet Engineering Task Force</workgroup>
+    <area>Operations and Management</area>
+    <workgroup>ONSEN</workgroup>
 
     <keyword>yang</keyword>
     <keyword>orchestration</keyword>
@@ -72,6 +72,52 @@
     <section anchor="introduction">
       <name>Introduction</name>
       <t>
+        Delivering a network service requires a service provider to translate
+        service requirements into network and device configuration. This
+        translation involves decisions at different levels: what service is
+        required, which network resources and functions will provide it, and
+        how those functions are configured on particular devices. Combining
+        these decisions in the same automation logic couples service delivery
+        to the details of the underlying infrastructure.
+      </t>
+      <t>
+        Service abstractions provide boundaries between these decisions. For
+        example, a device replacement may change how a network function is
+        configured without changing the service that depends on it. Such
+        boundaries also support delegation between teams: one team can request
+        a capability while the team providing it retains responsibility for
+        its implementation. To preserve these boundaries, each abstraction
+        needs a defined interface and clear authority over the configuration
+        used to realize it.
+      </t>
+      <t>
+        These responsibilities continue after initial provisioning. Accepted
+        service requirements may not yet be realized, configuration changes
+        may complete only partially, and failures in shared resources may
+        affect several services. Each abstraction therefore needs to relate
+        its requested services to their dependencies and report whether those
+        services have been realized and remain healthy.
+      </t>
+      <t>
+        YANG (<xref target="RFC7950"/>) can describe configuration and
+        operational state at each level of abstraction. Building an
+        orchestration system from these models also requires rules for how
+        the abstractions interact: where translation takes place, which
+        component may change configuration, and how observations are
+        interpreted as service state.
+      </t>
+      <t>
+        This document defines the Service Orchestration with YANG-modeled
+        Abstractions (SOYA) framework to describe these interactions. Each
+        layer exposes a YANG-modeled service interface, translates its
+        accepted intent into configuration for the layer immediately below,
+        and derives its service state from operational observations. The
+        framework defines schema and datastore boundaries, configuration
+        ownership, and processing responsibilities. These rules apply
+        whether layers are hosted within one orchestrator or distributed
+        across several orchestrators.
+      </t>
+      <!-- <t>
         The YANG Data Modeling Language (<xref target="RFC7950"/>) describes
         configuration, state data, operations, and notifications. It can model
         both individual network devices and service abstractions spanning
@@ -95,7 +141,7 @@
         state of its dependencies and publishes the state of its own services.
         These relationships are logical: the layers may run within one SOYA
         Orchestrator or be distributed across several SOYA Orchestrators.
-      </t>
+      </t> -->
       <section anchor="scope">
         <name>Scope and Relationship to Existing Work</name>
         <t>
@@ -120,9 +166,17 @@
       <section anchor="terminology">
         <name>Terminology</name>
         <t>
-          This document uses the following terms. Datastore terminology follows
-          the Network Management Datastore Architecture (NMDA)
-          (<xref target="RFC8342"/>).
+          The terms "datastore", "configuration datastore",
+          "applied configuration", "system state", "operational state"
+          are used as defined in the Network Management Datastore Architecture
+          (NMDA) (<xref target="RFC8342" section="3" sectionFormat="of"/>).
+          The running configuration datastore (&lt;running&gt;), candidate
+          configuration datastore (&lt;candidate&gt;), intended configuration
+          datastore (&lt;intended&gt;), and operational state datastore
+          (&lt;operational&gt;) also follow the definitions in that document.
+        </t>
+        <t>
+          This document defines the following terms:
         </t>
         <dl>
           <dt>Service layer:</dt>
@@ -149,6 +203,24 @@
           <dd>A component that exposes YANG-modeled configuration and state
             while implementing the native management protocol of a device
             whose interface does not use YANG.</dd>
+          <dt>Northbound interface:</dt>
+          <dd>
+            An interface through which a service layer accepts YANG-modeled
+            service intent from its clients and exposes operational state.
+            A client may be an external application or the orchestrator
+            hosting the layer immediately above. Northbound interfaces are
+            discussed in <xref target="northbound-interfaces"/>.
+          </dd>
+
+          <dt>Southbound interface:</dt>
+          <dd>
+            An interface through which a service layer delivers generated
+            configuration to the layer immediately below, or to managed
+            devices or their adapters at the lowest service layer. It also
+            provides access to the receiving system's operational state.
+            Southbound interfaces are discussed in
+            <xref target="southbound-interfaces"/>.
+          </dd>
         </dl>
       </section>
     </section>
@@ -211,23 +283,49 @@
       </section>
       <section anchor="datastore-context">
         <name>Service Layers and Datastores</name>
+
         <t>
-          A service layer is distinct from an NMDA datastore. The
-          &lt;running&gt;, &lt;intended&gt;, and &lt;operational&gt; datastores
-          are views of data within a layer (<xref target="RFC8342"/>).
-          Transforming configuration from &lt;running&gt; to &lt;intended&gt;
-          within that context is distinct from generating configuration for
-          the next SOYA layer, which has its own schema and datastore context.
+          A service layer defines a level of abstraction and the business logic
+          that realizes services at that level. An NMDA datastore defines a
+          logical context for storing and accessing YANG-modeled data
+          (<xref target="RFC8342"/>). The layer determines what the data
+          represents and how it is processed, while its datastores distinguish
+          accepted configuration, intended configuration, and operational state.
         </t>
         <t>
-          Under NMDA, &lt;operational&gt; contains configuration currently in
-          use, represented by "config true" nodes, together with system state
-          represented by "config false" nodes. Service health, processing
-          progress, and failure information are examples of derived state that
-          a layer can model using "config false" nodes. A layer should define
-          what it means for its intent to be applied and how that differs
-          from the health of the service being provided. These distinctions
-          allow clients to distinguish accepted intent from observed results.
+          NMDA describes datastores in terms of device configuration and state,
+          but the same concepts apply to service layers within an orchestrator.
+          Each SOYA layer has its own logical datastore context, whose contents
+          describe that layer's abstraction, such as VPN services or a desired
+          network topology. The &lt;running&gt;, &lt;intended&gt;, and
+          &lt;operational&gt; datastores describe data within that layer;
+          they are not separate service layers. Transforming configuration
+          within this context is distinct from generating configuration for
+          the next SOYA layer.
+        </t>
+        <t>
+          For example, a layer's &lt;intended&gt; datastore may describe the VPN
+          services to be realized. Its business logic translates these services
+          into connectivity requests for the layer below, where they are
+          processed within that layer's own datastore context. As lower layers
+          apply configuration and report observations, each layer uses those
+          observations to determine the applied configuration and service state
+          it exposes through &lt;operational&gt;. The VPN layer expresses these
+          results in terms of VPN services, while lower layers express them in
+          terms of their own abstractions. Each layer therefore maintains its
+          own configuration and state at its own level of abstraction, even
+          when several layers are hosted within one orchestrator.
+        </t>
+        <t>
+          Within each layer, &lt;operational&gt; contains applied configuration,
+          represented by "config true" nodes, together with system state
+          represented by "config false" nodes. Service health, realization
+          progress, and failure information are examples of state that a layer
+          can model using "config false" nodes. Each layer should define what
+          it means for its configuration to be applied and distinguish this
+          from the health of the service it provides. For example, a VPN's
+          configuration may remain applied while a supporting resource failure
+          degrades its connectivity.
         </t>
       </section>
     </section>
@@ -250,11 +348,26 @@
         between layers is established by their schema and datastore contexts,
         rather than by assigning a new XML namespace to each layer.
       </t>
+
+      <t>
+        The following subsections describe how intent is translated down
+        through the layers and how operational state is interpreted and
+        published upwards. They also discuss configuration ownership, service
+        dependencies, and the processing needed to maintain services when
+        realization is interrupted or only partially completed.
+      </t>
       <section anchor="propagating-service-intent-down">
         <name>Propagating Service Intent Down</name>
         <t>
+          Translating intent through successive layers keeps each layer's
+          implementation details within its own scope. Restricting configuration
+          updates to the layer above preserves responsibility for generated
+          configuration and prevents independent writers from making changes
+          that conflict with, or are overwritten by, that layer's processing.
+        </t>
+        <t>
           Intent originating outside the orchestration system enters at the
-          highest service layer through the northbound interfaces described
+          highest service layer through the northbound interfaces, as described
           in <xref target="northbound-interfaces"/>. Each layer's business logic
           translates its own intent into configuration for the layer
           immediately below. The generated configuration becomes the receiving
@@ -281,6 +394,13 @@
       <section anchor="propagating-operational-state-up">
         <name>Propagating Operational State Up</name>
         <t>
+          The state of individual resources does not by itself establish whether
+          a service meets its requirements. Each layer interprets observations
+          using its knowledge of the services it provides and their dependencies.
+          Publishing the resulting service state allows higher layers to assess
+          their own services without reproducing lower-layer interpretation logic.
+        </t>
+        <t>
           Each layer's business logic maintains and publishes the state of
           the services it provides. Derived information, such as service
           health or realization progress, is exposed as "config false"
@@ -292,8 +412,7 @@
           A layer may read operational state from anywhere in the stack,
           subject to authorization. The preferred pattern is to consume state
           from the layer immediately below and publish an abstraction for the
-          layer above. This limits the knowledge that higher layers need of
-          lower-layer implementation details. Access to operational state
+          layer above. Access to operational state
           does not grant authority to modify the observed layer's
           configuration or use its running configuration as an additional
           source of intent.
@@ -578,13 +697,13 @@ Function intent |                         | function state
         the business logic uses to derive its own layer's state.
       </t>
       <t>
-        The northbound and southbound protocols of a SOYA Orchestrator need
+        The northbound and southbound protocols of a SOYA Orchestrator may
         not be the same. For example, intent received over RESTCONF may result
         in configuration delivered over NETCONF. The business logic determines
         the configuration to generate, while the southbound integration
         handles protocol operations and target capabilities. For YANG-based
         targets, this includes discovering the supported schema through YANG
-        Library (<xref target="RFC8525"/>), where available.
+        Library (<xref target="RFC8525"/>), when available.
       </t>
       <t>
         The integration reports configuration results and communication

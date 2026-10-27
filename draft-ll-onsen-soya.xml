@@ -42,7 +42,7 @@
       </address>
     </author>
 
-    <date year="2026"/>
+    <date day="27" month="October" year="2026"/>
 
     <area>Operations and Management</area>
     <workgroup>ONSEN</workgroup>
@@ -117,31 +117,16 @@
         whether layers are hosted within one orchestrator or distributed
         across several orchestrators.
       </t>
-      <!-- <t>
-        The YANG Data Modeling Language (<xref target="RFC7950"/>) describes
-        configuration, state data, operations, and notifications. It can model
-        both individual network devices and service abstractions spanning
-        multiple devices. A service abstraction allows a client to request
-        an outcome at one level of detail while the system providing that
-        service determines how to realize it.
-      </t>
       <t>
-        This document defines the Service Orchestration with
-        YANG-modeled Abstractions (SOYA) framework. Each service layer exposes
-        a YANG schema, accepts intent expressed through that schema, and
-        translates it into configuration for the next layer. The business
-        logic at each layer implements the translation and determines how
-        observations from below affect the service it provides. This division
-        allows a layer's implementation to evolve while its service interface
-        remains stable.
+        SOYA leaves the number of layers, their schemas, and their business
+        logic to the deployment. A layer may decompose one service into
+        several lower-layer service instances, or combine several inputs
+        into configuration for a shared resource. YANG defines the data and
+        its constraints; executable business logic supplies the mapping
+        between abstractions. The framework accommodates different mapping
+        implementations and management protocols without prescribing a
+        common service schema or a distributed transaction mechanism.
       </t>
-      <t>
-        Intent flows down through successive abstractions to device
-        configuration. Operational state flows up as each layer evaluates the
-        state of its dependencies and publishes the state of its own services.
-        These relationships are logical: the layers may run within one SOYA
-        Orchestrator or be distributed across several SOYA Orchestrators.
-      </t> -->
       <section anchor="scope">
         <name>Scope and Relationship to Existing Work</name>
         <t>
@@ -153,14 +138,15 @@
           suitable layers.
         </t>
         <t>
-          SOYA leaves the number of layers, their schemas, and their business
-          logic to the deployment. A layer may decompose one service into
-          several lower-layer service instances, or combine several inputs
-          into configuration for a shared resource. YANG defines the data and
-          its constraints; executable business logic supplies the mapping
-          between abstractions. The framework accommodates different mapping
-          implementations and management protocols without prescribing a
-          common service schema or a distributed transaction mechanism.
+          The Service Assurance for Intent-Based Networking (SAIN) orchestrator
+          defined in <xref target="RFC9417"/> could be integrated with a SOYA
+          Orchestrator to derive an assurance graph from service intent and the
+          corresponding configuration generated for lower layers and devices.
+          The SOYA orchestrator would configure the SAIN orchestrator with the
+          necessary context about the services and their dependencies through
+          the YANG modules defined in <xref target="RFC9418"/>. The resulting
+          health scores and symptoms, gathered by a SAIN collector, could be fed
+          back to the business logic at the relevant SOYA layer.
         </t>
       </section>
       <section anchor="terminology">
@@ -426,32 +412,12 @@
           the service's requirements. Each layer is responsible for the
           meaning of the state it publishes.
         </t>
-        <section>
-        <name>SAIN Integration</name>
-          <t>
-            The Service Assurance for Intent-Based Networking (SAIN) orchestrator
-            defined in <xref target="RFC9417"/> could be integrated with a SOYA
-            Orchestrator to derive an assurance graph from service intent and the
-            corresponding configuration generated for lower layers and devices.
-            The SOYA orchestrator would configure the SAIN orchestrator with the
-            necessary context about the services and their dependencies through
-            the YANG modules defined in <xref target="RFC9418"/>.
-          </t>
-          <t> The resulting health scores and symptoms,
-            gathered by a SAIN collector, could be fed back to the business logic
-            at the relevant SOYA layer. That layer would map these results to its
-            own service instances and publish the appropriate "config false"
-            operational state for broader consumption. This allows
-            SAIN to provide service assurance while each SOYA layer retains
-            responsibility for the operational state it exposes.
-          </t>
-        </section>
       </section>
       <section anchor="configuration-ownership">
         <name>Service Dependencies and Configuration Ownership</name>
         <t>
           Each layer should retain the association between a service instance
-          and the lower-layer objects it creates or uses. These associations
+          and the lower-layer configuration it creates or uses. These associations
           support fault correlation, updates, recovery, and removal of obsolete
           configuration. Stable identifiers allow an observation or failure
           at a lower layer to be related to the affected service instances.
@@ -460,8 +426,8 @@
           such as YANG leafrefs.
         </t>
         <t>
-          One service instance may depend on several lower-layer objects, and
-          one lower-layer object may support several services. The layer
+          One service instance may depend on several lower-layer configuration elements, and
+          one lower-layer configuration element may support several services. The layer
           generating the configuration is responsible for reconciling these
           demands and resolving conflicts before submitting an update. If
           several orchestrator instances host the same logical layer, they
@@ -470,7 +436,7 @@
         </t>
         <t>
           Deleting a service removes the configuration that is no longer
-          required for that service. Shared objects must remain while they
+          required for that service. Shared configuration elements must remain while they
           are needed by other services. A layer should retain enough
           association and processing state to complete or retry cleanup after
           an interruption, even if the original intent has already been
@@ -519,81 +485,6 @@
           service state should remain visible while recovery is in progress.
         </t>
       </section>
-    </section>
-
-    <section anchor="layering-example">
-      <name>Example of Layered L3VPN Service Delivery</name>
-      <t>
-        Consider a Layer 3 virtual private network (L3VPN) connecting two
-        customer sites, requested using the L3VPN Service Model (L3SM) in
-        <xref target="RFC8299"/>. The request describes the sites, their
-        network accesses, and connectivity requirements. Three SOYA service
-        layers realize the request, as shown in
-        <xref target="layering-example-figure"/>. The network and device
-        abstraction layers use deployment-specific YANG models.
-      </t>
-      <figure anchor="layering-example-figure">
-        <name>L3VPN Service Delivery Through Abstraction Layers</name>
-        <artwork type="ascii-art" align="center"><![CDATA[
-              Customer / service application
-                |                        ^
-                | L3SM intent            | L3SM state
-                v                        |
-       +------------------------------------------+
-       | Service layer                            |
-       | L3SM (RFC 8299)                          |
-       +------------------------------------------+
-                |                         ^
- Network intent |                         | network state
-                v                         |
-       +------------------------------------------+
-       | Network layer                            |
-       | Deployment-specific network model        |
-       +------------------------------------------+
-                |                         ^
-Function intent |                         | function state
-                v                         |
-       +------------------------------------------+
-       | Device function layer                    |
-       | VRFs, customer interfaces, ...           |
-       +------------------------------------------+
-                |                         ^
-  Device config |                         | device state
-                v                         |
-       +------------------------------------------+
-       | Device model level                       |
-       | YANG-capable devices or adapters         |
-       +------------------------------------------+
-]]></artwork>
-      </figure>
-      <t>
-        The service layer maps the customer sites and requirements to
-        provider-network endpoints and connectivity. It expresses the result
-        as configuration in the deployment's network model, which becomes the
-        network layer's intent.
-      </t>
-      <t>
-        The network layer decomposes that intent into requests for functions
-        on selected devices: for example, a virtual routing and forwarding
-        (VRF) instance, routed interfaces, BGP neighbors, and bandwidth
-        policies. These requests form the intent consumed by the device
-        abstraction layer.
-      </t>
-      <t>
-        The device abstraction layer translates function requests into
-        configuration conforming to each target's supported device models.
-        Its business logic handles differences in device schemas and
-        capabilities. The southbound integration or YANG-facing adapter
-        performs all management protocol operations, as described in
-        <xref target="southbound-interfaces"/>.
-      </t>
-      <t>
-        If an interface fails, the device abstraction layer reports the
-        affected function's state. The network layer associates that function
-        with the VPN connectivity it provides, and the service layer derives
-        the customer-facing service state through (augmentations to) the L3SM.
-        Any recovery action follows the same layer boundaries.
-      </t>
     </section>
 
     <section anchor="northbound-interfaces">
@@ -787,6 +678,81 @@ Function intent |                         | function state
           protocol.
         </t>
       </section>
+    </section>
+
+    <section anchor="layering-example">
+      <name>Example of Layered L3VPN Service Delivery</name>
+      <t>
+        Consider a Layer 3 virtual private network (L3VPN) connecting two
+        customer sites, requested using the L3VPN Service Model (L3SM) in
+        <xref target="RFC8299"/>. The request describes the sites, their
+        network accesses, and connectivity requirements. Three SOYA service
+        layers realize the request, as shown in
+        <xref target="layering-example-figure"/>. The network and device
+        abstraction layers use deployment-specific YANG models.
+      </t>
+      <figure anchor="layering-example-figure">
+        <name>L3VPN Service Delivery Through Abstraction Layers</name>
+        <artwork type="ascii-art" align="center"><![CDATA[
+              Customer / service application
+                |                        ^
+                | L3SM intent            | L3SM state
+                v                        |
+       +------------------------------------------+
+       | Service layer                            |
+       | L3SM (RFC 8299)                          |
+       +------------------------------------------+
+                |                         ^
+ Network intent |                         | network state
+                v                         |
+       +------------------------------------------+
+       | Network layer                            |
+       | Deployment-specific network model        |
+       +------------------------------------------+
+                |                         ^
+Function intent |                         | function state
+                v                         |
+       +------------------------------------------+
+       | Device function layer                    |
+       | VRFs, customer interfaces, ...           |
+       +------------------------------------------+
+                |                         ^
+  Device config |                         | device state
+                v                         |
+       +------------------------------------------+
+       | Device model level                       |
+       | YANG-capable devices or adapters         |
+       +------------------------------------------+
+]]></artwork>
+      </figure>
+      <t>
+        The service layer maps the customer sites and requirements to
+        provider-network endpoints and connectivity. It expresses the result
+        as configuration in the deployment's network model, which becomes the
+        network layer's intent.
+      </t>
+      <t>
+        The network layer decomposes that intent into requests for functions
+        on selected devices: for example, a virtual routing and forwarding
+        (VRF) instance, routed interfaces, BGP neighbors, and bandwidth
+        policies. These requests form the intent consumed by the device
+        abstraction layer.
+      </t>
+      <t>
+        The device abstraction layer translates function requests into
+        configuration conforming to each target's supported device models.
+        Its business logic handles differences in device schemas and
+        capabilities. The southbound integration or YANG-facing adapter
+        performs all management protocol operations, as described in
+        <xref target="southbound-interfaces"/>.
+      </t>
+      <t>
+        If an interface fails, the device abstraction layer reports the
+        affected function's state. The network layer associates that function
+        with the VPN connectivity it provides, and the service layer derives
+        the customer-facing service state through (augmentations to) the L3SM.
+        Any recovery action follows the same layer boundaries.
+      </t>
     </section>
 
     <section anchor="IANA">
